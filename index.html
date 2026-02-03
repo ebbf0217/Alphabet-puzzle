@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>FOR EILEEN</title>
+<style>
+  :root{
+    /* Theme: Green + Orange */
+    --bgA:#f3fff5;
+    --bgB:#fff7ed;
+
+    --card:rgba(255,255,255,.82);
+    --line:rgba(17, 24, 39, .10);
+    --shadow: 0 14px 34px rgba(16,24,40,.10);
+
+    --ink:#183028;
+    --muted:#5b7a6a;
+
+    --green:#22c55e;
+    --green2:#16a34a;
+    --orange:#fb923c;
+    --orange2:#f97316;
+    --lemon:#fde047;
+
+    --cell:#ffffff;
+    --cell2:#f6fffa;
+
+    --danger:#ef4444;
+    --danger2:#fecaca;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 18% 10%, rgba(34,197,94,.20) 0%, transparent 62%),
+      radial-gradient(900px 600px at 90% 18%, rgba(249,115,22,.22) 0%, transparent 62%),
+      linear-gradient(135deg, var(--bgA), var(--bgB));
+    display:flex;
+    justify-content:center;
+  }
+
+  .app{
+    width:min(1150px, 96vw);
+    padding:18px 14px 24px;
+  }
+
+  /* Header */
+  .header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    padding:12px 14px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow: var(--shadow);
+  }
+  .logo{
+    width:42px; height:42px; border-radius:16px;
+    background: conic-gradient(from 180deg, var(--green), var(--orange), var(--lemon), var(--green2), var(--orange2), var(--green));
+    box-shadow: 0 10px 20px rgba(34,197,94,.18);
+  }
+  .brand h1{
+    margin:0;
+    font-size:16px;
+    line-height:1.1;
+    letter-spacing:.4px;
+  }
+  .brand p{
+    margin:3px 0 0;
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .stats{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .pill{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:10px 12px;
+    box-shadow: var(--shadow);
+    display:flex;
+    gap:8px;
+    align-items:center;
+    font-size:13px;
+    font-weight:900;
+    color:rgba(24,48,40,.92);
+    white-space:nowrap;
+  }
+  .dot{
+    width:10px; height:10px; border-radius:50%;
+    background: var(--green);
+    box-shadow: 0 0 0 4px rgba(34,197,94,.14);
+  }
+  .dot.score{ background: var(--orange); box-shadow: 0 0 0 4px rgba(249,115,22,.16); }
+  .dot.combo{ background: var(--lemon); box-shadow: 0 0 0 4px rgba(253,224,71,.20); }
+
+  button{
+    border:none;
+    background: linear-gradient(135deg, var(--green2), var(--orange2));
+    color:white;
+    padding:10px 12px;
+    border-radius:14px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow: 0 12px 20px rgba(249,115,22,.16);
+    transition: transform .08s ease;
+  }
+  button:active{ transform: scale(.98); }
+  button.secondary{
+    background: linear-gradient(135deg, #ffffff, #fff7ed);
+    color:var(--ink);
+    border:1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+
+  /* Layout */
+  .layout{
+    display:grid;
+    grid-template-columns: 1fr 280px;
+    gap:12px;
+    align-items:start;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    box-shadow: var(--shadow);
+    padding:14px;
+  }
+
+  /* Target slots */
+  .targetTitle{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .targetTitle h2{
+    margin:0;
+    font-size:16px;
+  }
+  .sub{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.35;
+  }
+
+  .slotsRow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-top:10px;
+  }
+  .slot{
+    width:64px;
+    height:64px;
+    border-radius:18px;
+    background: linear-gradient(135deg, rgba(34,197,94,.14), rgba(249,115,22,.12));
+    border: 2px dashed rgba(34,197,94,.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    font-weight:900;
+    user-select:none;
+
+    /* faint by default */
+    color: rgba(24,48,40,.22);
+    transition: transform .10s ease, border-color .10s ease, background .10s ease, color .10s ease, box-shadow .10s ease;
+    cursor:pointer;
+  }
+  .slot:hover{ transform: translateY(-1px); }
+  .slot.filled{
+    border-style:solid;
+    background: linear-gradient(135deg, rgba(34,197,94,.25), rgba(253,224,71,.22));
+    border-color: rgba(34,197,94,.55);
+    color: rgba(24,48,40,.96);
+    box-shadow: 0 14px 18px rgba(16,24,40,.08);
+  }
+  .slot.armed{
+    border-color: rgba(249,115,22,.70);
+    box-shadow: 0 16px 30px rgba(249,115,22,.14);
+  }
+  .slot.match{
+    border-style:solid;
+    border-color: rgba(34,197,94,.70);
+    box-shadow: 0 16px 30px rgba(34,197,94,.14);
+  }
+
+  /* Wrong slot feedback */
+  .slot.wrong{
+    border-style:solid;
+    border-color: rgba(239,68,68,.75);
+    background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(254,202,202,.18));
+    animation: shake .22s ease-in-out;
+  }
+  @keyframes shake{
+    0%{ transform: translateX(0); }
+    25%{ transform: translateX(-6px); }
+    50%{ transform: translateX(6px); }
+    75%{ transform: translateX(-4px); }
+    100%{ transform: translateX(0); }
+  }
+
+  /* Grid */
+  .grid{
+    margin-top:14px;
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap:9px;
+  }
+  .cell{
+    height:58px;
+    border-radius:18px;
+    background: linear-gradient(135deg, var(--cell), var(--cell2));
+    border: 1px solid rgba(17,24,39,.07);
+    box-shadow: 0 12px 16px rgba(16,24,40,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:900;
+    user-select:none;
+    cursor:pointer;
+    position:relative;
+    transition: transform .10s ease, box-shadow .10s ease, outline-color .10s ease;
+  }
+  .cell:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 14px 18px rgba(16,24,40,.08);
+  }
+  .cell.selected{
+    outline: 3px solid rgba(249,115,22,.75);
+    outline-offset: 2px;
+    transform: translateY(-2px) scale(1.02);
+  }
+  .cell.matchHint{
+    outline: 3px solid rgba(34,197,94,.35);
+    outline-offset: 2px;
+  }
+  .cell.pop{ animation: pop .16s ease-in-out; }
+  @keyframes pop{
+    0%{ transform: scale(.98); }
+    60%{ transform: scale(1.06); }
+    100%{ transform: scale(1); }
+  }
+
+  /* Storage */
+  .storageTitle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .storageTitle h3{ margin:0; font-size:15px; }
+  .hint{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.35;
+  }
+  .slots{
+    display:grid;
+    grid-template-rows: repeat(5, 58px);
+    gap:9px;
+  }
+  .stash{
+    height:58px;
+    border-radius:18px;
+    background: rgba(255,255,255,.55);
+    border: 2px dashed rgba(24,48,40,.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:20px;
+    color: rgba(24,48,40,.74);
+    transition: transform .10s ease, border-color .10s ease, box-shadow .10s ease;
+    user-select:none;
+    cursor:pointer;
+  }
+  .stash.filled{
+    background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,247,237,.88));
+    border-style:solid;
+    box-shadow: 0 12px 16px rgba(16,24,40,.06);
+  }
+  .stash.selected{
+    outline: 3px solid rgba(34,197,94,.55);
+    outline-offset: 2px;
+    transform: translateY(-2px);
+  }
+
+  /* Mobile selection chip */
+  .selectionChip{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:16px;
+    background: rgba(255,255,255,.70);
+    border:1px solid rgba(17,24,39,.08);
+    box-shadow: 0 10px 18px rgba(16,24,40,.06);
+  }
+  .selectionChip b{ font-size:13px; }
+  .selectionChip .big{
+    font-size:18px;
+    font-weight:1000;
+    letter-spacing:.5px;
+  }
+  .selectionChip .ghost{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .toast{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:18px;
+    padding:10px 12px;
+    border-radius:999px;
+    background: rgba(255,255,255,.92);
+    border:1px solid rgba(17,24,39,.08);
+    box-shadow: var(--shadow);
+    font-size:13px;
+    font-weight:900;
+    color: rgba(24,48,40,.92);
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(-2px);
+  }
+
+  @media (max-width: 980px){
+    .layout{ grid-template-columns: 1fr; }
+  }
+
+  /* Mobile: bigger touch targets */
+  @media (max-width: 520px){
+    .slot{ width:62px; height:62px; font-size:26px; }
+    .cell{ height:56px; font-size:22px; }
+    .slots{ grid-template-rows: repeat(5, 54px); }
+    .stash{ height:54px; font-size:18px; }
+    .pill{ padding:9px 10px; font-size:12px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>FOR EILEEN</h1>
+        <p>Tap to merge · Tap to solve · Store 5</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="pill"><span class="dot"></span>Level: <span id="level">1</span></div>
+      <div class="pill"><span class="dot score"></span>Score: <span id="score">0</span></div>
+      <div class="pill"><span class="dot combo"></span>Combo: <span id="combo">x1</span></div>
+      <button class="secondary" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <div class="targetTitle">
+        <div>
+          <h2>Target Word</h2>
+          <p class="sub" id="targetHint"></p>
+        </div>
+      </div>
+
+      <div class="slotsRow" id="targetSlots"></div>
+
+      <div class="selectionChip" id="selectionChip">
+        <div>
+          <b>Selected</b>
+          <div class="ghost" id="selText">Nothing selected</div>
+        </div>
+        <div class="big" id="selBig">—</div>
+      </div>
+
+      <div class="hint" style="margin-top:10px">
+        ✅ Solve: tap a board letter → tap the matching slot above.<br>
+        ✅ Merge: tap a board letter → tap another same letter to upgrade (A+A→B...).<br>
+        ✅ Storage: tap board → tap empty storage to store. Tap storage → tap board to swap.
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="storageTitle">
+        <h3>Storage (5)</h3>
+      </div>
+      <div class="slots" id="storageSlots"></div>
+      <div class="hint" style="margin-top:10px" id="difficultyHint"></div>
+      <div class="hint" style="margin-top:10px">
+        Tip: Merge combos reward speed. Target difficulty grows fairly by level.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Nice!</div>
+
+<script>
+/* =============================
+   Core State
+============================= */
+const SIZE = 7;
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+// Curated word pools (expand anytime)
+const WORDS = [
+  // EASY (mostly A-H, 3 letters)
+  "BAD","BAG","BAR","BAT","CAB","CAN","CAP","CAR","CAT","DAB","DAD","DAN","DAY",
+  "EAR","EAT","FAN","FAR","FAT","GAS","GAP","HAT","HAD","HEN","HIM",
+
+  // MEDIUM (3-4 letters, mostly early letters)
+  "BARK","BAND","BANK","BEAR","BEAD","BEAT","BELL","BEND","BIRD","BITE",
+  "BOAT","BOOK","CAMP","CART","CAVE","CODE","COOL","COLD","DARK","DEAL",
+  "DEEP","DICE","DISH","ECHO","FIRE","FISH","FORK","GAME","GATE","GOLD","GOOD","HOME",
+
+  // HARDER (4-6 letters, introduce I-V)
+  "APPLE","BRICK","CLOUD","DANCE","GLASS","GREEN","HONEY","HOUSE","LIGHT","MOUSE",
+  "MUSIC","NIGHT","OCEAN","PLANE","PLANT","POINT","POWER","RIVER","SHEEP","SHARK","SNAKE","SUGAR","TABLE","TRAIN",
+  "ORANGE","GARDEN","FAMILY","WINTER","SUMMER",
+
+  // LATE (includes late letters; longer)
+  "WORLD","WHITE","BLACK","SWORD","MAGIC","UNITY","SWIFT",
+  "JAZZ","FUZZ","BUZZ","QUIZ","JINX","VEX","WAX","YAWN","ZANY",
+  "ZOOM","ZEST","ZERO","ZEBRA"
+];
+
+let level = 1;
+let score = 0;
+
+let grid = [];
+let storage = Array(5).fill(null);
+
+let targetWord = "";
+let targetFilled = [];
+
+// Tap-selection state
+let pick = null; // {source:'grid', r,c, letter} OR {source:'storage', idx, letter}
+
+/* ===== Merge combo system ===== */
+let mergeCombo = 0;               // 0 means x1
+let lastMergeAt = 0;
+const COMBO_WINDOW_MS = 2500;     // must merge again within this time
+function comboMultiplier(){
+  // x1, x1.3, x1.6, x2.0, x2.5 ... capped
+  const m = 1 + Math.min(1.6, mergeCombo * 0.30);
+  return m;
+}
+function updateComboUI(){
+  const mult = comboMultiplier();
+  document.getElementById("combo").textContent = `x${mult.toFixed(1)}`;
+}
+function bumpMergeCombo(){
+  const now = Date.now();
+  if(now - lastMergeAt <= COMBO_WINDOW_MS){
+    mergeCombo += 1;
+  } else {
+    mergeCombo = 0;
+  }
+  lastMergeAt = now;
+  updateComboUI();
+}
+function decayComboIfNeeded(){
+  const now = Date.now();
+  if(lastMergeAt && (now - lastMergeAt > COMBO_WINDOW_MS)){
+    mergeCombo = 0;
+    updateComboUI();
+  }
+}
+
+/* =============================
+   Difficulty (fair curve)
+============================= */
+function letterIndex(ch){ return LETTERS.indexOf(ch); }
+function wordMaxLetterIndex(word){
+  let m = 0;
+  for(const ch of word) m = Math.max(m, letterIndex(ch));
+  return m;
+}
+function levelParams(lv){
+  if(lv <= 2)  return {lenMin:3, lenMax:3, cap:"H"};
+  if(lv <= 5)  return {lenMin:3, lenMax:4, cap:"K"};
+  if(lv <= 9)  return {lenMin:4, lenMax:4, cap:"N"};
+  if(lv <= 14) return {lenMin:4, lenMax:5, cap:"R"};
+  if(lv <= 20) return {lenMin:5, lenMax:6, cap:"V"};
+  return          {lenMin:5, lenMax:7, cap:"Z"};
+}
+function pickTargetWord(){
+  const p = levelParams(level);
+  const capIdx = letterIndex(p.cap);
+
+  let candidates = WORDS.filter(w =>
+    w.length >= p.lenMin &&
+    w.length <= p.lenMax &&
+    wordMaxLetterIndex(w) <= capIdx
+  );
+
+  if(candidates.length < 6){
+    candidates = WORDS.filter(w => w.length >= p.lenMin && w.length <= p.lenMax);
+  }
+  if(candidates.length === 0) candidates = WORDS.slice();
+
+  const weights = candidates.map(w => {
+    const mx = wordMaxLetterIndex(w);
+    return 1 + (capIdx ? (mx / Math.max(1, capIdx)) : 0) + (w.length / Math.max(1, p.lenMax));
+  });
+
+  let sum = weights.reduce((a,b)=>a+b,0);
+  let r = Math.random() * sum;
+  for(let i=0;i<candidates.length;i++){
+    r -= weights[i];
+    if(r <= 0){ targetWord = candidates[i]; break; }
+  }
+  if(!targetWord) targetWord = candidates[Math.floor(Math.random()*candidates.length)];
+  targetFilled = Array.from({length: targetWord.length}, () => false);
+}
+
+/* =============================
+   Spawn distribution (rarity)
+============================= */
+function rarityAlphaForLevel(lv){
+  return Math.min(3.2, 1.15 + lv * 0.095);
+}
+function randomLetterByLevel(lv){
+  const alpha = rarityAlphaForLevel(lv);
+  let sum = 0;
+  const weights = [];
+  for(let i=0;i<LETTERS.length;i++){
+    const w = 1 / Math.pow(i+1, alpha);
+    weights.push(w);
+    sum += w;
+  }
+  let r = Math.random() * sum;
+  for(let i=0;i<weights.length;i++){
+    r -= weights[i];
+    if(r <= 0) return LETTERS[i];
+  }
+  return "A";
+}
+function nextLetter(ch){
+  const i = LETTERS.indexOf(ch);
+  return (i >= 0 && i < 25) ? LETTERS[i+1] : "Z";
+}
+
+/* =============================
+   Helpers
+============================= */
+function fillBoardFull(){
+  grid = Array.from({length: SIZE}, () =>
+    Array.from({length: SIZE}, () => randomLetterByLevel(level))
+  );
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 900);
+}
+function animateCell(r,c){
+  const el = document.getElementById(`cell-${r}-${c}`);
+  if(!el) return;
+  el.classList.remove("pop");
+  void el.offsetWidth;
+  el.classList.add("pop");
+}
+function clearPick(){
+  pick = null;
+}
+function updateSelectionChip(){
+  const selText = document.getElementById("selText");
+  const selBig = document.getElementById("selBig");
+  if(!pick){
+    selText.textContent = "Nothing selected";
+    selBig.textContent = "—";
+    return;
+  }
+  if(pick.source === "grid"){
+    selText.textContent = `Board letter selected (tap a slot to solve OR tap same letter to merge)`;
+    selBig.textContent = pick.letter;
+  } else {
+    selText.textContent = `Storage letter selected (tap a board cell to swap)`;
+    selBig.textContent = pick.letter;
+  }
+}
+function levelUp(){
+  score += 250 + level * 35;
+  level += 1;
+
+  // small pressure reroll
+  for(let i=0;i<6;i++){
+    const rr = Math.floor(Math.random()*SIZE);
+    const cc = Math.floor(Math.random()*SIZE);
+    grid[rr][cc] = randomLetterByLevel(level);
+  }
+
+  pickTargetWord();
+  clearPick();
+  toast(`Solved! Level ${level} 🎉`);
+}
+
+/* =============================
+   Wrong slot feedback helper
+============================= */
+function pulseWrong(slotEl){
+  slotEl.classList.remove("wrong");
+  void slotEl.offsetWidth; // reflow
+  slotEl.classList.add("wrong");
+  setTimeout(()=>slotEl.classList.remove("wrong"), 260);
+}
+
+/* =============================
+   Input logic (TAP-BASED)
+============================= */
+function tapGridCell(r,c){
+  decayComboIfNeeded();
+
+  const letter = grid[r][c];
+
+  if(!pick){
+    pick = {source:'grid', r, c, letter};
+    renderAll();
+    animateCell(r,c);
+    return;
+  }
+
+  // storage selected -> swap
+  if(pick.source === 'storage'){
+    const idx = pick.idx;
+    const tmp = grid[r][c];
+    grid[r][c] = storage[idx];
+    storage[idx] = tmp;
+    score += 1;
+    clearPick();
+    renderAll();
+    toast("Swapped!");
+    return;
+  }
+
+  // grid selected -> merge or move selection
+  if(pick.source === 'grid'){
+    const a = pick;
+    const sameCell = (a.r === r && a.c === c);
+
+    if(sameCell){
+      clearPick();
+      renderAll();
+      return;
+    }
+
+    if(a.letter === letter){
+      // MERGE with combo
+      bumpMergeCombo();
+      const mult = comboMultiplier();
+
+      grid[r][c] = nextLetter(letter);
+      grid[a.r][a.c] = randomLetterByLevel(level);
+
+      const base = 10;
+      const gained = Math.round(base * mult);
+      score += gained;
+
+      clearPick();
+      renderAll();
+      animateCell(r,c);
+
+      if(mergeCombo > 0){
+        toast(`Merged! +${gained} (combo x${mult.toFixed(1)})`);
+      } else {
+        toast(`Merged! +${gained}`);
+      }
+      return;
+    }
+
+    // move selection
+    pick = {source:'grid', r, c, letter};
+    renderAll();
+    animateCell(r,c);
+  }
+}
+
+function tapTargetSlot(i, slotEl){
+  decayComboIfNeeded();
+
+  if(!pick || pick.source !== 'grid'){
+    toast("Tap a board letter first 🙂");
+    pulseWrong(slotEl);
+    return;
+  }
+  if(targetFilled[i]){
+    toast("This slot is already filled 🙂");
+    pulseWrong(slotEl);
+    return;
+  }
+
+  const need = targetWord[i];
+  const letter = pick.letter;
+
+  if(letter !== need){
+    toast("Wrong letter 😅");
+    pulseWrong(slotEl);
+    return;
+  }
+
+  // Fill success
+  targetFilled[i] = true;
+  grid[pick.r][pick.c] = randomLetterByLevel(level);
+  score += 25;
+  clearPick();
+
+  if(targetFilled.every(Boolean)){
+    levelUp();
+  } else {
+    toast("Nice! 👍");
+  }
+  renderAll();
+}
+
+function tapStorageSlot(i){
+  decayComboIfNeeded();
+
+  const has = storage[i];
+
+  if(!pick){
+    if(has){
+      pick = {source:'storage', idx:i, letter: has};
+      renderAll();
+      toast("Storage selected");
+    } else {
+      toast("Empty storage");
+    }
+    return;
+  }
+
+  if(pick.source === 'grid'){
+    if(has){
+      toast("Storage is not empty 😅");
+      return;
+    }
+    storage[i] = pick.letter;
+    grid[pick.r][pick.c] = randomLetterByLevel(level);
+    score += 1;
+    clearPick();
+    renderAll();
+    toast("Stored!");
+    return;
+  }
+
+  if(pick.source === 'storage'){
+    if(!has){
+      clearPick();
+      renderAll();
+      return;
+    }
+    pick = {source:'storage', idx:i, letter: has};
+    renderAll();
+  }
+}
+
+/* =============================
+   Render
+============================= */
+const elLevel = document.getElementById("level");
+const elScore = document.getElementById("score");
+const elGrid = document.getElementById("grid");
+const elTargetSlots = document.getElementById("targetSlots");
+const elTargetHint = document.getElementById("targetHint");
+const elStorageSlots = document.getElementById("storageSlots");
+const elDifficultyHint = document.getElementById("difficultyHint");
+
+function renderTop(){
+  elLevel.textContent = String(level);
+  elScore.textContent = String(score);
+
+  const p = levelParams(level);
+  const mx = wordMaxLetterIndex(targetWord);
+  const mxChar = LETTERS[mx] || "A";
+
+  elTargetHint.textContent =
+    `Tap board letter → tap matching slot. (Level window: length ${p.lenMin}-${p.lenMax}, letters up to ${p.cap}, target max: ${mxChar})`;
+
+  const alpha = rarityAlphaForLevel(level).toFixed(2);
+  elDifficultyHint.textContent =
+    `Difficulty: higher levels unlock longer words & later letters. Spawn rarity α=${alpha}. Merge fast for combos.`;
+}
+
+function renderTarget(){
+  elTargetSlots.innerHTML = "";
+  const armed = (pick && pick.source === 'grid');
+  const pickedLetter = armed ? pick.letter : null;
+
+  for(let i=0;i<targetWord.length;i++){
+    const need = targetWord[i];
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    slot.textContent = need;
+
+    if(targetFilled[i]) slot.classList.add("filled");
+    if(armed && !targetFilled[i]) slot.classList.add("armed");
+    if(armed && !targetFilled[i] && pickedLetter === need) slot.classList.add("match");
+
+    slot.addEventListener("click", () => tapTargetSlot(i, slot));
+    elTargetSlots.appendChild(slot);
+  }
+}
+
+function renderGrid(){
+  elGrid.innerHTML = "";
+
+  // Optional hint: when a board letter is selected, show faint highlight on other same letters (for easier merging)
+  const armed = (pick && pick.source === 'grid');
+  const pickedLetter = armed ? pick.letter : null;
+
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      const d = document.createElement("div");
+      d.className = "cell";
+      d.id = `cell-${r}-${c}`;
+      d.textContent = grid[r][c];
+
+      if(armed && pick.r === r && pick.c === c){
+        d.classList.add("selected");
+      } else if(armed && grid[r][c] === pickedLetter){
+        d.classList.add("matchHint");
+      }
+
+      d.addEventListener("click", () => tapGridCell(r,c));
+      elGrid.appendChild(d);
+    }
+  }
+}
+
+function renderStorage(){
+  elStorageSlots.innerHTML = "";
+  for(let i=0;i<5;i++){
+    const s = document.createElement("div");
+    s.className = "stash";
+    if(storage[i] != null) s.classList.add("filled");
+    s.textContent = storage[i] ? storage[i] : "Empty";
+
+    if(pick && pick.source === 'storage' && pick.idx === i){
+      s.classList.add("selected");
+    }
+
+    s.addEventListener("click", () => tapStorageSlot(i));
+    elStorageSlots.appendChild(s);
+  }
+}
+
+function renderAll(){
+  renderTop();
+  renderTarget();
+  renderGrid();
+  renderStorage();
+  updateSelectionChip();
+  updateComboUI();
+}
+
+/* =============================
+   Init
+============================= */
+function resetGame(){
+  level = 1;
+  score = 0;
+  storage = Array(5).fill(null);
+  clearPick();
+
+  mergeCombo = 0;
+  lastMergeAt = 0;
+  updateComboUI();
+
+  fillBoardFull();
+  pickTargetWord();
+  renderAll();
+}
+
+document.getElementById("resetBtn").addEventListener("click", resetGame);
+
+// Keep combo display honest even if player pauses
+setInterval(decayComboIfNeeded, 250);
+
+resetGame();
+</script>
+</body>
+</html>
